@@ -34,7 +34,7 @@ count_observations(data) = length(data)
 
 Splits a data set into a training and validation data set.
 """
-function split_validation(rng::AbstractRNG, data::AbstractArray, labels::AbstractVecOrMat; frac::Float64=0.1)
+function split_validation(data::AbstractArray, labels::AbstractVecOrMat; rng::AbstractRNG, frac::Float64=0.1)
     nsamples = size(data)[end]
     idxs = randperm(rng, nsamples)
     ntrain = nsamples - floor(Int, frac * nsamples)
