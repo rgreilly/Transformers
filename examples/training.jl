@@ -60,7 +60,7 @@ function train!(loss, model, train_data, opt_state, val_data; num_epochs=10)
         )
     for epoch in 1:num_epochs
         print(stderr, "")
-        progress = Progress(length(train_data); desc="epoch $epoch/$n_epochs")
+        progress = Progress(length(train_data); desc="epoch $epoch/$num_epochs")
         total_loss = 0.0    
         for (i, Xy) in enumerate(train_data)
             batch_loss, grads = Flux.withgradient(model) do m
