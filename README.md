@@ -1,4 +1,4 @@
-# TransformersLite
+# Transformers
 
 A basic transformer package. This repository is a copy of one by [Lior Sinai](https://github.com/LiorSinai/TransformersLite.jl)
 and is paired with this [blog post](https://liorsinai.github.io/coding/2022/05/18/transformers.html). For a much more comprehensive package with APIs for HuggingFace, optimizations and more, please see Transformers.jl at [github.com/chengchingwen/Transformers.jl](https://github.com/chengchingwen/Transformers.jl).
