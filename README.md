@@ -1,6 +1,6 @@
 # TransformersLite
 
-A basic transformer package. This repository is meant for learning
+A basic transformer package. This repository is a copy of one by [Lior Sinai](https://github.com/LiorSinai/TransformersLite.jl)
 and is paired with this [blog post](https://liorsinai.github.io/coding/2022/05/18/transformers.html). For a much more comprehensive package with APIs for HuggingFace, optimizations and more, please see Transformers.jl at [github.com/chengchingwen/Transformers.jl](https://github.com/chengchingwen/Transformers.jl).
 
 This package is designed to work with [Flux](https://github.com/FluxML/Flux.jl). It provides a multi-head attention layer as described in the paper [Attention is all you need](https://arxiv.org/abs/1706.03762).
@@ -55,28 +55,13 @@ jupyter notebook
 
 ## Case study
 
-The use case of Amazon Reviews from [HuggingFace](https://huggingface.co/datasets/amazon_reviews_multi) was investigated.
+The use case of Amazon Reviews from [Kaggle](https://www.kaggle.com/datasets/bittlingmayer/amazonreviews) was investigated.
 The task was to predict the star rating on a 5 star scale given a review. 
-A simpler task was also investigated to predict a positive or negative sentiment with 1-2 stars labelled negative, 4-5 stars labelled positive and 3 stars removed. Only the English subset of the dataset was used with 200,000 training samples and 5,000 test samples.
 
 It should be noted that this task can be solved with simpler models. A TFIDF model paired with logistic regression with approximately 10,000 weights
 achieved similar accuracy to these models with more than 240,000 weights.
 
-The accuracy achieved was 87.5% for the binary task and 49.9% for the 5 star classification task.
-For the binary case, a model which scores each sentence individually and then aggregates their results with a parabolic weighted average achieved an accuracy of 89.3%.
-
-### Binary task
-<img src="images/confusion_matrix_regression.png"
-     alt="confusion matrix"
-    />
-
-The confusion matrix shows that the binary model does indeed mostly predict the correct class.
-
-<img src="images/probabilities_star.png"
-     alt="bar chart probabilities vs star"
-    />
-
-The probabilities for each star are strongly biased in the right way, with 1 star ratings being mostly negative and 5 star ratings mostly positive. The model was not trained on 3 star reviews so here the distribution approaches a uniform distribution (random) with a negative skew. But that may also be a reflection of the underlying data because humans are not consistent with their ratings for 3 stars. 
+The accuracy achieved was around 50% for the 5 star classification task.
 
 ### 5 star classification task
 <img src="images/confusion_matrix_classification5.png"
@@ -93,47 +78,3 @@ Again this is hypothesized  to be partially because of inconsistencies in the un
 Seeing in another view as a bar chart, for each star the most likely prediction is the star itself.
 However the distributions do have a spread and have significant overlaps of confusion.
 
-## Installation
-
-Download the GitHub repository (it is not registered). Then in the Julia REPL:
-```
-julia> ] # enter package mode
-(@v1.x) pkg> dev path\\to\\TransformersLite
-julia> using Revise # for dynamic editing of code
-julia> using TransformersLite
-```
-
-Done. 
-
-### Dependencies
-
-Other than Julia this requires Python for:
-- HuggingFace datasets package. 
-- Jupyter notebooks.
-
-Optional packages:
-- TokenisersLite: [https://github.com/LiorSinai/TokenizersLite](https://github.com/LiorSinai/TokenizersLite).
-- BytePairEncoding: [https://github.com/chengchingwen/BytePairEncoding.jl](https://github.com/chengchingwen/BytePairEncoding.jl).
-
-
-## Troubleshooting
-
-### CUDA & DataFrames breaks dropout
-
-The following error may occur:
-```
-ERROR: LoadError: InvalidIRError: compiling kernel rand!(CuDeviceVector{Float32, 1}, UInt32, UInt32) resulted in invalid LLVM IR
-Reason: unsupported dynamic function invocation (call to CUDA.Philox2x32{R}() where R in CUDA at ~/.julia/packages/CUDA/01uIm/src/device/random.jl:46)
-```
-
-This error does not seem to occur in Julia 1.8 or greater.
-
-If it persists, after `using Random` and before `using DataFrames` add:
-```Julia
-if has_cuda()
-    a = CuArray{Float32}(undef, 2)
-    Random.rand!(CUDA.default_rng(), a)
-end
-```
-
-See https://github.com/JuliaGPU/CUDA.jl/issues/1508  and https://discourse.julialang.org/t/package-entanglement-why-using-one-package-breaks-another/. 
